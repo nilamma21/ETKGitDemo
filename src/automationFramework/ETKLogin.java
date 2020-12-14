@@ -8,37 +8,15 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class launchBrowser {
+public class ETKLogin {
 
 	public static void main(String[] args) throws InterruptedException {
 		
 		System.setProperty("webdriver.chrome.driver", "C:\\Users\\nilamma\\Jar files\\chromedriver_win32\\chromedriver.exe");
 		WebDriver driver = new ChromeDriver();
 		
-		//CRM App
-		driver.get("https://imcqa.crm.dynamics.com/");
-		driver.manage().window().maximize();
-		Thread.sleep(3000);
-		
-		driver.findElement(By.xpath("//input[@name='loginfmt']")).sendKeys("nilamma@cybage.com");
-		
-		driver.findElement(By.xpath("//input[@id='idSIButton9']")).click();
-		Thread.sleep(5000);
-		/*WebElement loginPageLogo = driver.findElement(By.xpath("//span[@id='submitButton']"));
-		
-		WebDriverWait wait=new WebDriverWait(driver, 10);
-		wait.until(ExpectedConditions.visibilityOf(loginPageLogo));*/
-		
-		driver.findElement(By.id("passwordInput")).click();
-		
-		driver.findElement(By.id("passwordInput")).sendKeys("cybage#123");
-		
-		driver.findElement(By.xpath("//span[@id='submitButton']")).click();
-		
-		driver.quit();
-		
-		/* ETK App
-		//driver.get("https://staging.expotoolkit.com");
+		//ETK App
+		driver.get("https://staging.expotoolkit.com");
 		//Login
 		driver.findElement(By.linkText("Administrator Sign-in")).click();
 		WebDriverWait wait=new WebDriverWait(driver, 20);
@@ -51,8 +29,6 @@ public class launchBrowser {
 		//Shows selection from list
 		Select select_shows = new Select (driver.findElement(By.id("pagebody_cboMonths")));
 		select_shows.selectByVisibleText("December 2020");
-		
-		*/		
 		
 		//driver.quit();
 		System.out.println("Execution complete");
