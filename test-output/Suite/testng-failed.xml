@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="Failed suite [Suite]">
+  <test name="Test(failed)">
+    <classes>
+      <class name="ETK.TestPage">
+        <methods>
+          <include name="initialize"/>
+          <include name="tearDown"/>
+          <include name="LandingPageNavigation" invocation-numbers="1"/>
+        </methods>
+      </class> <!-- ETK.TestPage -->
+      <class name="ETK.validateTitle">
+        <methods>
+          <include name="initialize"/>
+          <include name="tearDown"/>
+        </methods>
+      </class> <!-- ETK.validateTitle -->
+    </classes>
+  </test> <!-- Test(failed) -->
+</suite> <!-- Failed suite [Suite] -->
