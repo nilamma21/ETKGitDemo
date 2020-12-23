@@ -76,6 +76,7 @@ public class LandingTest extends base
 		//HomePage hp = new HomePage(driver);
 		//Assert.assertTrue(hp.getHomeTitle().isDisplayed());
 		
+		System.out.println("User is redirected to Home page");
 	}
 	
 	@DataProvider
