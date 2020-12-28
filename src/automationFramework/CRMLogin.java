@@ -1,7 +1,10 @@
 package automationFramework;
 
+import java.util.concurrent.TimeUnit;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -34,8 +37,8 @@ public class CRMLogin {
 		driver.findElement(By.xpath("//input[@name='loginfmt']")).sendKeys("nilamma@cybage.com");
 		
 		driver.findElement(By.xpath("//input[@id='idSIButton9']")).click();
-		Thread.sleep(5000);
 		
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//div[@id='loginMessage']")));
 		driver.findElement(By.id("passwordInput")).click();
 		
 		driver.findElement(By.id("passwordInput")).sendKeys("cybage#123");
@@ -58,7 +61,7 @@ public class CRMLogin {
 		Thread.sleep(30000);
 	}
 	
-	public void createAccount() throws InterruptedException
+	public void selectDDMngmentMenu()
 	{
 		driver.switchTo().frame("AppLandingPage");
 
@@ -66,12 +69,22 @@ public class CRMLogin {
 			
 		//Wait till Home page is displayed
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[contains(text(),'Home')]")));
-
+		
+		//**Need to remove below two lines while final execution(Already added in createAccount method)
+		//Select Accounts menu from left navigation bar
+		driver.findElement(By.xpath("//span[contains(text(),'Accounts')]")).click();
+		//Wait till Active Accounts page is displayed
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[contains(text(),'New')]")));
+		
+	}
+	
+	public void createAccount() throws InterruptedException
+	{
 		//Select Accounts menu from left navigation bar
 		driver.findElement(By.xpath("//span[contains(text(),'Accounts')]")).click();
 		
 		//Wait till Active Accounts page is displayed
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//body/div[@id='shell-container']/div[@id='ApplicationShell']/div[4]/div[2]/div[1]/div[1]/div[1]/div[1]/div[2]/div[1]/section[1]/div[1]/div[1]/div[1]/ul[1]")));
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[contains(text(),'New')]")));
 		
 		//Click on 'New' button
 		driver.findElement(By.xpath("//span[contains(text(),'New')]")).click();
@@ -139,7 +152,7 @@ public class CRMLogin {
 	}
 	
 	public void validateAccount() throws InterruptedException
-	{
+	{	
 		WebElement searchAccount = driver.findElement(By.xpath("//input[@aria-label='Search this view']"));
 		searchAccount.click();
 		searchAccount.sendKeys("Cyb_QATest");
@@ -153,14 +166,94 @@ public class CRMLogin {
 			System.out.println("Failed to create a new account");
 		}
 	}
+	
+	public void deactivateAccount() throws InterruptedException
+	{
+		WebElement accName = null;
+		//String accNameTitle = null;
+		CharSequence accNameTitle = null;
+		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS) ;
+		//Click on 'A' link to sort accounts starts with 'A'
+		driver.findElement(By.xpath("//a[@id='A_link']")).click();
+		
+		try {
+		Thread.sleep(4000);	
+		//Select 2nd account name in list
+		accName = driver.findElement(By.xpath("//div[@data-id='cell-1-2']"));
+		accName.click();
+		accNameTitle = accName.getText();
+		System.out.println(accNameTitle);
+		}
+		catch(StaleElementReferenceException e) {
+			System.out.println(e.getMessage());
+        }
+		
+		//Wait till Deactivate button is displayed
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//button[@aria-label='Deactivate']")));
+		
+		//Click on Deactivate button
+		driver.findElement(By.xpath("//button[@aria-label='Deactivate']")).click();
+		
+		//Click on 'Deactivate button of confirmation po-up
+		driver.findElement(By.xpath("//button[@data-id='ok_id']")).click();
+		
+		WebElement activateBtn = driver.findElement(By.xpath("//button[@aria-label='Activate']"));
+		if (activateBtn.isDisplayed()) {
+			System.out.println("Selected account is deactivated successfully");
+		}
+		else {
+			System.out.println("Failed to deactivate an account");
+		}
+		
+		//Navigate back to Active accounts page
+		driver.findElement(By.xpath("//span[@class='symbolFont BackButton-symbol pa-ak ']")).click();
+		
+		//Click on 'Active Accounts' drop-down view button
+		driver.findElement(By.xpath("//span[@class='symbolFont ChevronDownMed-symbol  ']")).click();
+		
+		//Select 'Inactive Accounts' option
+		driver.findElement(By.xpath("//*[text()='Inactive Accounts']")).click();
+		
+		Thread.sleep(6000);
+		//Click on 'A' link to sort accounts starts with 'A'
+		try {
+			WebElement alink = driver.findElement(By.xpath("//a[@id='A_link']"));
+			wait.until(ExpectedConditions.elementToBeClickable(alink));
+			alink.click();
+			Thread.sleep(3000);
+			
+			//Validate deactivated account
+			WebElement searchAcc = driver.findElement(By.xpath("//input[@aria-label='Search this view']"));
+			searchAcc.click();
+			searchAcc.sendKeys(accNameTitle);
+			driver.findElement(By.xpath("//button[@aria-label='Start search']")).click();
+			Thread.sleep(10000);
+			WebElement validateInactiveAcc = driver.findElement(By.xpath("//div[@data-id='cell-0-2']"));
+			if (validateInactiveAcc.isDisplayed()) {
+				System.out.println("Deactivated Account is displayed under 'Inactive Account' list");
+			}
+			else {
+				System.out.println("Failed to display deactived account");
+			}	
+		}
+		catch (StaleElementReferenceException exe) {
+			System.out.println(exe.getMessage());
+		}
+		catch (IllegalArgumentException ex)
+		{
+			System.out.println(ex.getMessage());
+		}
+	}
 
 	public static void main(String[] args) throws InterruptedException
 	{
 		CRMLogin cl = new CRMLogin();
 		cl.initilizeDriver();
 		cl.Login();
-		cl.createAccount();
-		cl.validateAccount();
+		cl.selectDDMngmentMenu();
+		//cl.createAccount();
+		//cl.validateAccount();
+		cl.deactivateAccount();
 	}
 
 }
