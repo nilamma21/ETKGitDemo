@@ -170,8 +170,8 @@ public class CRMLogin {
 	public void deactivateAccount() throws InterruptedException
 	{
 		WebElement accName = null;
-		//String accNameTitle = null;
 		CharSequence accNameTitle = null;
+		
 		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS) ;
 		//Click on 'A' link to sort accounts starts with 'A'
 		driver.findElement(By.xpath("//a[@id='A_link']")).click();
@@ -244,6 +244,60 @@ public class CRMLogin {
 			System.out.println(ex.getMessage());
 		}
 	}
+	
+	public void addIncentiveDetails() throws InterruptedException
+	{
+		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS) ;
+		
+		//Click on 'A' link to sort accounts starts with 'A'
+		driver.findElement(By.xpath("//a[@id='A_link']")).click();
+		Thread.sleep(4000);	
+			
+		//Select 3rd account name in list
+		WebElement acctName = driver.findElement(By.xpath("//div[@data-id='cell-2-2']"));
+		acctName.click();
+		
+		//Select 'Incentives' tab
+		driver.findElement(By.xpath("//li[@data-id='tablist-tab_4']")).click();
+		
+		//Click on 'New Incentive Details' button
+		driver.findElement(By.xpath("//span[@aria-label='New Incentive Detail']")).click();
+		
+		
+		//Enter the data in Incentive field 
+		WebElement Inctxtbox = driver.findElement(By.xpath("//input[@aria-label='Incentive, Lookup']"));
+		Inctxtbox.click();
+		Inctxtbox.sendKeys(Keys.ENTER); 
+		
+		driver.findElement(By.xpath("//button[@aria-label='Change View']")).click();
+		driver.findElement(By.xpath("//li[@aria-label='Active Incentives']")).click();
+		driver.findElement(By.xpath("//span[@data-id='xxc_incentiveid.fieldControl-xxc_accountid0_0_0']")).click();
+		
+		//Enter the data in Incentive Category field
+		WebElement Inccattxtbox = driver.findElement(By.xpath("//input[@aria-label='Incentive Category, Lookup']"));
+		Inccattxtbox.click();
+		Inccattxtbox.sendKeys("Atlanta");
+		driver.findElement(By.xpath("//button[@aria-label='Search records for Incentive Category, Lookup field']")).click();
+		WebElement IncCatag = driver.findElement(By.xpath("//li[@aria-label='Atlanta Hotel']"));
+		String IncCatagtitle = IncCatag.getText();
+		//System.out.println(IncCatagtitle);
+		IncCatag.click();
+		//driver.findElement(By.xpath("//button[@aria-label='Save and Close']")).click();
+		
+		driver.findElement(By.xpath("//button[@aria-label='Cancel']")).click();
+		driver.findElement(By.xpath("//button[@aria-label='Discard changes']")).click();
+		
+		//Verify that added Incentive details are reflected correctly
+		WebElement IncName = driver.findElement(By.xpath("//div[@data-id='cell-0-4']"));
+		System.out.println(IncName.getText());
+		if ((IncName.getText()).contains(IncCatagtitle)) {
+			System.out.println("Incentive details get added successfully");
+		}
+		else {
+			System.out.println("Fails to add Incentive Details");
+		}
+
+	}
 
 	public static void main(String[] args) throws InterruptedException
 	{
@@ -253,7 +307,8 @@ public class CRMLogin {
 		cl.selectDDMngmentMenu();
 		//cl.createAccount();
 		//cl.validateAccount();
-		cl.deactivateAccount();
+		//cl.deactivateAccount();
+		cl.addIncentiveDetails();
 	}
 
 }
