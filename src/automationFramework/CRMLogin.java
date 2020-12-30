@@ -11,6 +11,7 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
 
 public class CRMLogin {
 	
@@ -254,7 +255,7 @@ public class CRMLogin {
 		Thread.sleep(4000);	
 			
 		//Select 3rd account name in list
-		WebElement acctName = driver.findElement(By.xpath("//div[@data-id='cell-2-2']"));
+		WebElement acctName = driver.findElement(By.xpath("//div[@data-id='cell-1-2']"));
 		acctName.click();
 		
 		//Select 'Incentives' tab
@@ -271,6 +272,7 @@ public class CRMLogin {
 		
 		driver.findElement(By.xpath("//button[@aria-label='Change View']")).click();
 		driver.findElement(By.xpath("//li[@aria-label='Active Incentives']")).click();
+		Thread.sleep(2000);
 		driver.findElement(By.xpath("//span[@data-id='xxc_incentiveid.fieldControl-xxc_accountid0_0_0']")).click();
 		
 		//Enter the data in Incentive Category field
@@ -280,13 +282,10 @@ public class CRMLogin {
 		driver.findElement(By.xpath("//button[@aria-label='Search records for Incentive Category, Lookup field']")).click();
 		WebElement IncCatag = driver.findElement(By.xpath("//li[@aria-label='Atlanta Hotel']"));
 		String IncCatagtitle = IncCatag.getText();
-		//System.out.println(IncCatagtitle);
 		IncCatag.click();
-		//driver.findElement(By.xpath("//button[@aria-label='Save and Close']")).click();
-		
-		driver.findElement(By.xpath("//button[@aria-label='Cancel']")).click();
-		driver.findElement(By.xpath("//button[@aria-label='Discard changes']")).click();
-		
+		driver.findElement(By.xpath("//button[@aria-label='Save and Close']")).click();
+		Thread.sleep(5000);
+				
 		//Verify that added Incentive details are reflected correctly
 		WebElement IncName = driver.findElement(By.xpath("//div[@data-id='cell-0-4']"));
 		System.out.println(IncName.getText());
@@ -296,7 +295,12 @@ public class CRMLogin {
 		else {
 			System.out.println("Fails to add Incentive Details");
 		}
-
+		
+		//Verify that expected Success message displayed
+		Thread.sleep(3000);
+		WebElement toastmsg = driver.findElement(By.xpath("//span[@data-id='notification-message']"));
+		System.out.println(toastmsg.getText());
+		Assert.assertEquals("Your changes were saved.", toastmsg.getText());
 	}
 
 	public static void main(String[] args) throws InterruptedException
