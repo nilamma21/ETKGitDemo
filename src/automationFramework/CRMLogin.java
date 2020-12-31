@@ -1,7 +1,6 @@
 package automationFramework;
 
 import java.util.concurrent.TimeUnit;
-
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.StaleElementReferenceException;
@@ -11,17 +10,17 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.Assert;
+import org.testng.*;
 
 public class CRMLogin {
 	
 	public static WebDriver driver;
 	public WebDriverWait wait;
+	public String accnameText;
 	
 	public void initilizeDriver()
 	{
 		System.setProperty("webdriver.chrome.driver", "C:\\Users\\nilamma\\Jar files\\chromedriver_win32\\chromedriver.exe");
-
 		driver = new ChromeDriver();
 		driver.manage().window().maximize();	
 	}
@@ -71,11 +70,11 @@ public class CRMLogin {
 		//Wait till Home page is displayed
 		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[contains(text(),'Home')]")));
 		
-		//**Need to remove below two lines while final execution(Already added in createAccount method)
+		/*//**Need to remove below two lines while final execution(Already added in createAccount method)
 		//Select Accounts menu from left navigation bar
 		driver.findElement(By.xpath("//span[contains(text(),'Accounts')]")).click();
 		//Wait till Active Accounts page is displayed
-		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[contains(text(),'New')]")));
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[contains(text(),'New')]")));*/
 		
 	}
 	
@@ -97,12 +96,13 @@ public class CRMLogin {
 		//Enter Account Name
 		WebElement accountName = driver.findElement(By.xpath("//input[@id='id-276390f9-8bbf-4452-8f24-636b0ccaee2c-1-name8-name.fieldControl-text-box-text']"));
 		accountName.click();
-		accountName.sendKeys("Cyb_QATest");
+		accnameText = "Cyb_Account Test";
+		accountName.sendKeys(accnameText);
 		
 		//Enter Phone no.
 		WebElement phn = driver.findElement(By.xpath("//input[@aria-label='Phone']"));
 		phn.click();
-		phn.sendKeys("20255501917");
+		phn.sendKeys("20243251920");
 		Thread.sleep(5000);
 		
 		//Scroll up the page till Address field
@@ -116,16 +116,16 @@ public class CRMLogin {
 		driver.findElement(By.xpath("//div[contains(text(),'Buyer')]")).click();
 		address.click();
 		
-		//Enter Street1 address
-		WebElement street1 = driver.findElement(By.xpath("//input[@aria-label='Street 1']"));
-		//street1.click();
-		street1.sendKeys("QA Test Street");
-		
 		//Scroll down on the page
 		action.keyDown(Keys.CONTROL).sendKeys(Keys.DOWN).perform();
 		action.keyDown(Keys.CONTROL).sendKeys(Keys.DOWN).release().perform();
 		
 		Thread.sleep(5000);
+		//Enter Street1 address
+		WebElement street1 = driver.findElement(By.xpath("//input[@aria-label='Street 1']"));
+		//street1.click();
+		street1.sendKeys("QA Street31");
+		
 		//Enter City
 		WebElement city = driver.findElement(By.xpath("//input[@aria-label='City']"));
 		city.click();
@@ -139,7 +139,7 @@ public class CRMLogin {
 		//Enter country
 		WebElement zip = driver.findElement(By.xpath("//input[@aria-label='ZIP/Postal Code']"));
 		zip.click();
-		zip.sendKeys("444123");
+		zip.sendKeys("424130");
 		
 		WebElement country = driver.findElement(By.xpath("//input[@aria-label='Country']"));
 		country.click();
@@ -156,16 +156,19 @@ public class CRMLogin {
 	{	
 		WebElement searchAccount = driver.findElement(By.xpath("//input[@aria-label='Search this view']"));
 		searchAccount.click();
-		searchAccount.sendKeys("Cyb_QATest");
+		searchAccount.sendKeys(accnameText);
 		driver.findElement(By.xpath("//button[@aria-label='Start search']")).click();
 		Thread.sleep(10000);
-		WebElement validateAccName = driver.findElement(By.xpath("//a[contains(text(),'Cyb_QATest')]"));
+		WebElement validateAccName = driver.findElement(By.xpath("//a[contains(text(),'"+accnameText+"')]"));
 		if (validateAccName.isDisplayed()) {
 			System.out.println("New Account is created successfully");
 		}
 		else {
 			System.out.println("Failed to create a new account");
 		}
+		
+		//Clear the search term
+		driver.findElement(By.xpath("//span[@id='quickFind_button_icon_3']")).click();
 	}
 	
 	public void deactivateAccount() throws InterruptedException
@@ -244,6 +247,16 @@ public class CRMLogin {
 		{
 			System.out.println(ex.getMessage());
 		}
+		
+		//Clear the search term
+		driver.findElement(By.xpath("//span[@id='quickFind_button_icon_3']")).click();
+		
+		//Select Accounts menu from left navigation bar
+		driver.findElement(By.xpath("//span[contains(text(),'Accounts')]")).click();
+		
+		//Wait till Active Accounts page is displayed
+		wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//span[contains(text(),'New')]")));
+		
 	}
 	
 	public void addIncentiveDetails() throws InterruptedException
@@ -263,7 +276,6 @@ public class CRMLogin {
 		
 		//Click on 'New Incentive Details' button
 		driver.findElement(By.xpath("//span[@aria-label='New Incentive Detail']")).click();
-		
 		
 		//Enter the data in Incentive field 
 		WebElement Inctxtbox = driver.findElement(By.xpath("//input[@aria-label='Incentive, Lookup']"));
@@ -301,6 +313,54 @@ public class CRMLogin {
 		WebElement toastmsg = driver.findElement(By.xpath("//span[@data-id='notification-message']"));
 		System.out.println(toastmsg.getText());
 		Assert.assertEquals("Your changes were saved.", toastmsg.getText());
+		
+		//Navigate back to Inactive accounts list
+		driver.findElement(By.xpath("//span[@class='symbolFont BackButton-symbol pa-ak ']")).click();
+		
+		Thread.sleep(3000);	
+	}
+	
+	public void addTimeline() throws InterruptedException
+	{
+		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS) ;
+		
+		//Click on 'A' link to sort accounts starts with 'A'
+		driver.findElement(By.xpath("//a[@id='A_link']")).click();
+		Thread.sleep(4000);	
+			
+		//Select 4th account name in list
+		WebElement acctName = driver.findElement(By.xpath("//div[@data-id='cell-2-2']"));
+		acctName.click();
+		Thread.sleep(5000);
+	
+		//Click on create a timeline button
+		driver.findElement(By.xpath("//button[@aria-label='Create a timeline record.']")).click();
+		
+		driver.findElement(By.xpath("//li[@aria-label='Appointment Activity']")).click();
+		Thread.sleep(3000);
+		
+		WebElement subject = driver.findElement(By.xpath("//input[@aria-label='Subject']"));
+		subject.click();
+		String subtext = "Cyb_Appt";
+		subject.sendKeys(subtext);
+		
+		driver.findElement(By.xpath("//button[@data-id='quickCreateSaveAndCloseBtn']")).click();
+		Thread.sleep(5000);
+		
+		//Verify that added Timeline is reflected correctly
+		WebElement timeline = driver.findElement(By.xpath("//*[text()='"+subtext+"']"));
+		Assert.assertEquals(timeline.getText(), subtext);
+		
+		//Verify that expected Success message displayed
+		Thread.sleep(3000);
+		WebElement toastmsg = driver.findElement(By.xpath("//span[@data-id='notification-message']"));
+		System.out.println(toastmsg.getText());
+		Assert.assertEquals("Your changes were saved.", toastmsg.getText());
+	}
+	
+	public void tearDown()
+	{
+		driver.quit();
 	}
 
 	public static void main(String[] args) throws InterruptedException
@@ -309,10 +369,11 @@ public class CRMLogin {
 		cl.initilizeDriver();
 		cl.Login();
 		cl.selectDDMngmentMenu();
-		//cl.createAccount();
-		//cl.validateAccount();
-		//cl.deactivateAccount();
+		cl.createAccount();
+		cl.validateAccount();
+		cl.deactivateAccount();
 		cl.addIncentiveDetails();
+		cl.addTimeline();
+		cl.tearDown();
 	}
-
 }
